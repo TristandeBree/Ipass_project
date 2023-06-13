@@ -1,3 +1,4 @@
+from Card import Card
 def generate_cards():
     suits = ['clubs', 'diamonds', 'hearts', 'spades']
     numbers = ['7', '8', '9', '10', 'jack', 'queen', 'king', 'ace']
@@ -6,6 +7,6 @@ def generate_cards():
 
     for suit in suits:
         for number in numbers:
-            cards.append(f'{number}_of_{suit}.png')
+            cards.append(Card(suit, number))
 
     return cards
