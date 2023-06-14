@@ -1,11 +1,14 @@
 import pygame
 import random
 from Card import Card
+from Table import Table
 from Player import Player
 import game_items
+import time
 
 # initiating pygame
 pygame.init()
+pygame.event.pump()
 
 # making the screen
 # screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -16,24 +19,32 @@ cards = game_items.generate_cards()
 running = True
 cards_given = False
 
+handled = []
+cards_played = []
 
-def generate_cards():
-    no_copies = set()
-    for i in range(4):
-        card = random.choice(cards)
-        while card in no_copies:
-            card = random.choice(cards)
-        no_copies.add(card)
-    return list(no_copies)
+font = pygame.font.Font('freesansbold.ttf', 32)
 
+playing_table = Table()
 
-player1 = Player(0, True, generate_cards())
-player2 = Player(1, False, generate_cards())
-player3 = Player(2, False, generate_cards())
+player1 = Player(1, True, game_items.generate_4_cards(playing_table.card_deck))
+playing_table.remove_from_deck(player1.hand)
+player2 = Player(2, False, game_items.generate_4_cards(playing_table.card_deck))
+playing_table.remove_from_deck(player2.hand)
+player3 = Player(3, False, game_items.generate_4_cards(playing_table.card_deck))
+playing_table.remove_from_deck(player3.hand)
+
+players = [player1, player2, player3]
 
 player1.set_neighbours(player2, player3)
+player2.set_neighbours(player3, player1)
+player3.set_neighbours(player1, player2)
 
-handled = []
+playing_table.players = players
+playing_table.set_scores()
+
+print(playing_table.scores)
+
+current_player = playing_table.find_starting_player()
 
 while running:
     y = 600
@@ -41,28 +52,20 @@ while running:
     y2 = 100
     x3 = 1400
 
-    pos = pygame.mouse.get_pos()
-    pressed = pygame.mouse.get_pressed()[0]
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
 
     screen.fill((0, 0, 0))
 
-    if not cards_given:
-        random_cards = generate_cards()
-        cards_given = True
+    text = font.render(str(current_player), False, (0,255,0))
+    screen.blit(text, (600, 200))
 
-    for i, card in enumerate(random_cards):
-        image = pygame.image.load(f'playing_cards_pictures/{card}.png')
-        x = 600 + i * 80
-        screen.blit(image, (x, y))
-        if image.get_rect(center=(x + image.get_width() / 2, y + image.get_height() / 2)).collidepoint(pos):
-            pygame.draw.rect(screen, (255,255,0), pygame.Rect(x, y, image.get_width(), image.get_height()), 2)
-            if pygame.mouse.get_pressed()[0] and card not in handled:
-                handled.append(card)
-                print(card)
+    playing_table.draw_hand(current_player, screen)
+
+    playing_table.draw_played_cards(screen)
+
+    current_player = playing_table.play_action(screen, current_player)
 
     for i in range(4):
         image = pygame.image.load(f'playing_cards_pictures/back.png')
