@@ -12,15 +12,6 @@ class Player:
         self.last = False
         self.won = False
 
-    def set_neighbours(self, left, right):
-        if self.first:
-            right.last = True
-            self.right = right
-            self.left = left
-        else:
-            self.right = right
-            self.left = left
-
     def player_action(self, screen, card_played):
         action = False
         handled = []
@@ -41,7 +32,7 @@ class Player:
                 if pygame.mouse.get_pressed()[0] and card not in handled:
                     handled.append(card)
                     self.hand.remove(card)
-                    time.sleep(0.5)
+                    time.sleep(0.35)
                     self.played = card
                     action = True
         if action:
@@ -51,7 +42,7 @@ class Player:
 
     def __str__(self):
         # return f'Player: {self.number} played: {self.played.number} of {self.played.suit}'
-        return f'Player: {self.number}'
+        return f'Player {self.number}'
 
     def __eq__(self, other):
         return self.number == other.number
