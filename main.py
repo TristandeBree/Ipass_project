@@ -1,6 +1,7 @@
 import pygame
 import math
 from Menu import Menu
+from Helper import Helper
 import random
 from Card import Card
 from Table import Table
@@ -20,6 +21,7 @@ running = True
 
 font = pygame.font.Font('freesansbold.ttf', 32)
 menu = Menu()
+helper = Helper()
 
 pick_players = False
 
@@ -38,6 +40,8 @@ while running:
         screen.blit(text, (500, 200))
 
         playing_table.draw_hand(current_player, screen)
+
+        helper.baby_mode(current_player, playing_table.main_card, screen)
 
         playing_table.draw_played_cards(screen)
 

@@ -88,13 +88,15 @@ class Table:
         winning_card_played = self.main_card
         suit = self.main_card.suit
         winning = first
-        print("old winning player: " + str(winning))
         winning.won = True
         for player in self.players:
             if player != first:
                 if player.played.suit == suit and player.played > winning_card_played:
                     winning_card_played = player.played
+                    print("Player that was winning: " + str(winning))
+                    print("winning variable before: " + str(winning.won))
                     winning.won = False
+                    print("winning variable after: " + str(winning.won))
                     winning = player
                     print("new winning player:" + str(winning))
                     winning.won = True
@@ -104,7 +106,6 @@ class Table:
             self.reset_card_deck()
             for player in self.players:
                 if not player.won:
-                    print(player)
                     self.scores[player.number - 1] += 1
                 player.hand = game_items.generate_4_cards(self.card_deck)
                 self.remove_from_deck(player.hand)

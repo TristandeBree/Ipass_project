@@ -14,10 +14,10 @@ def generate_cards():
 
 
 def generate_4_cards(cards):
-    no_copies = set()
+    no_copies = []
     for i in range(4):
         card = random.choice(cards)
         while card in no_copies:
             card = random.choice(cards)
-        no_copies.add(card)
+        no_copies.append(card)
     return list(no_copies)

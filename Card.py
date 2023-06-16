@@ -9,3 +9,9 @@ class Card:
 
     def __gt__(self, other):
         return self.ranks.index(self.number) > self.ranks.index(other.number)
+
+    def __lt__(self, other):
+        return self.ranks.index(self.number) < self.ranks.index(other.number)
+
+    def __eq__(self, other):
+        return self.ranks.index(self.number) == self.ranks.index(other.number) and self.suit == other.suit

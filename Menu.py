@@ -2,6 +2,7 @@ import pygame
 import math
 import time
 
+
 class Menu:
     def get_player_amount(self, screen, font):
         for i in range(1,8):
