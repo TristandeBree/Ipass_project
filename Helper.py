@@ -29,6 +29,14 @@ class Helper:
                 pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(600 + i * 80, 600, 75, 109), 3)
 
     def better_mode(self, player, table, screen):
+        """
+        A better version of the baby version, this version will try to combo cards. Which means
+        that you will play 2 cards of the same suit after eachother when you won.
+        :param player: the player that needs recommendatinos
+        :param table: the table at which the game is played
+        :param screen: the screen on which needs to be drawn
+        :return: None
+        """
         best_cards = []
         for card in player.hand:
             if table.main_card is not None and card.suit == table.main_card.suit:
@@ -44,8 +52,6 @@ class Helper:
                                 best_cards.append(new_card)
                 break
 
-        # print([str(card.number) + str(card.suit) for card in best_cards])
-
         if not best_cards:
             card_to_recommend = min(player.hand)
         else:
@@ -59,17 +65,43 @@ class Helper:
                 else:
                     card_to_recommend = min(best_cards)
 
+        # draw a little edge around the card that needs to be recommended
         for i, card in enumerate(player.hand):
             if card == card_to_recommend:
                 pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(600 + i * 80, 600, 75, 109), 3)
 
     def begin_MCCFR(self, player, table, screen):
+        """
+        The base for the MCCFR algorithm, which will according to the game tree created by the cards in your hand
+        pick what option is the best to play and will recommend that card.
+        :param player: the player that is playing
+        :param table: the table at which the game is being played
+        :param screen: the screen on which needs to be drawn
+        :return: None
+        """
 
         def calculate_card_value(card):
+            """
+            gives a card value
+            :param card: the card that needs to be evaluated
+            :return: the value of that card according to the dictionary
+            """
             value_dict = {'jack': -4, 'queen': -3, 'king': -2, 'ace': -1, '7': 1, '8': 2, '9': 3, '10': 4}
             return value_dict[card.number]
 
         def optimal_path(cards, reach_prob, card_sequence, accumulated_regret, base=1, other_player_card=None):
+            """
+            This is the main loop of the algorithm, here we calculate the value of each card and try to find the best
+            one. If the best one is found, we remove it from the cards as if it is being played and check the rest of the
+            game tree.
+            :param cards: the cards that need to be ranked
+            :param reach_prob: the probability this card combination will be reached
+            :param card_sequence: the cards that have been played up untill now
+            :param accumulated_regret: the regret per card
+            :param base: the base reach probability
+            :param other_player_card: the card which suit needs to be followed
+            :return: the card sequence that is most optimal to play
+            """
             num_cards = len(cards)
 
             if num_cards == 0:
@@ -103,7 +135,10 @@ class Helper:
                 new_cards = cards[:card_index] + cards[card_index + 1:]
                 return optimal_path(new_cards, [reach_prob[0] / base], new_card_sequence, accumulated_regret, base + 1, other_player_card)
 
+        # find the best card to play with the hand of the player
         card_to_play = optimal_path(player.hand, [1], [], [0] * len(player.hand), other_player_card=table.main_card)[0]
+
+        # draw a little edge around the card which is recommended
         for i, card in enumerate(player.hand):
             if card == card_to_play:
                 pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(600 + i * 80, 600, 75, 109), 3)
