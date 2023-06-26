@@ -11,7 +11,6 @@ import time
 
 # initiating pygame
 pygame.init()
-pygame.event.pump()
 
 # making the screen
 # screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -41,7 +40,9 @@ while running:
 
         playing_table.draw_hand(current_player, screen)
 
-        helper.baby_mode(current_player, playing_table.main_card, screen)
+        playing_table.draw_rond(screen)
+
+        helper.begin_MCCFR(current_player, playing_table, screen)
 
         playing_table.draw_played_cards(screen)
 

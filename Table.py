@@ -11,8 +11,17 @@ class Table:
         self.set_players()
         self.scores = self.set_scores()
         self.main_card = None
+        self.last_won = None
+        self.last_won_card = None
+        self.round = 1
         self.font = pygame.font.Font('freesansbold.ttf', 24)
 
+    def is_winning(self, card):
+        winning_player = self.find_starting_player()
+        if winning_player.played is None or card > winning_player.played and card.suit == winning_player.played.suit:
+            return True
+        else:
+            return False
 
     def generate_players(self, amount_of_players):
         players = []
@@ -63,6 +72,10 @@ class Table:
             text = self.font.render(str(player.number), False, (255, 255, 255))
             screen.blit(text, (525 + i * 75, 275))
 
+    def draw_rond(self, screen):
+        text = self.font.render(f'round: {self.round}', False, (255, 255, 255))
+        screen.blit(text, (300, 300))
+
     def draw_hand(self, player, screen):
         for i, card in enumerate(player.hand):
             image = pygame.image.load(f'playing_cards_pictures/{card}.png')
@@ -80,7 +93,7 @@ class Table:
             if player.last:
                 return player
 
-    def check_results(self, round_number):
+    def check_results(self):
         first = self.find_starting_player()
         first.right.last = False
         first.first = False
@@ -93,17 +106,17 @@ class Table:
             if player != first:
                 if player.played.suit == suit and player.played > winning_card_played:
                     winning_card_played = player.played
-                    print("Player that was winning: " + str(winning))
-                    print("winning variable before: " + str(winning.won))
                     winning.won = False
-                    print("winning variable after: " + str(winning.won))
                     winning = player
-                    print("new winning player:" + str(winning))
                     winning.won = True
                 player.played = None
 
-        if round_number == 4:
+        self.last_won = winning
+        self.last_won_card = winning_card_played
+
+        if self.round == 4:
             self.reset_card_deck()
+            self.round = 1
             for player in self.players:
                 if not player.won:
                     self.scores[player.number - 1] += 1
@@ -123,7 +136,8 @@ class Table:
         if player.last:
             move_made = player.player_action(screen, self.main_card)
             if move_made:
-                self.check_results(4 - len(player.hand))
+                self.check_results()
+                self.round += 1
                 return self.find_starting_player()
         elif player.first:
             move_made = player.player_action(screen, None)

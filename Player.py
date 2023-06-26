@@ -40,6 +40,15 @@ class Player:
         else:
             return False
 
+    def check_suits_in_hand(self):
+        dict = {}
+        for card in self.hand:
+            if card.suit in dict.keys():
+                dict[card.suit] += 1
+            else:
+                dict[card.suit] = 1
+        return dict
+
     def __str__(self):
         # return f'Player: {self.number} played: {self.played.number} of {self.played.suit}'
         return f'Player {self.number}'

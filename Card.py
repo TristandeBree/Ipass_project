@@ -1,5 +1,5 @@
 class Card:
-    ranks = ["jack", "queen", "king", "ace", "7", "8" , "9", "10"]
+    ranks = ["jack", "queen", "king", "ace", "7", "8", "9", "10"]
     def __init__(self, _suit, _number):
         self.suit = _suit
         self.number = _number
