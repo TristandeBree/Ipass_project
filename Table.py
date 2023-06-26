@@ -122,8 +122,8 @@ class Table:
                     self.scores[player.number - 1] += 1
                 player.hand = game_items.generate_4_cards(self.card_deck)
                 self.remove_from_deck(player.hand)
-            first.left.first = True
-            first.last = True
+            winning.left.first = True
+            winning.last = True
             print(self.scores)
             print(self.find_starting_player())
             return

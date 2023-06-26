@@ -86,7 +86,7 @@ class Helper:
 
             expected_values = [calculate_card_value(card) for card in filtered_cards]
             counterfactual_value = sum([reach * value for reach, value in zip(reach_prob, expected_values)])
-            # instantanious_regret = [reach * value - counterfactual_value for reach, value in zip(reach_prob, expected_values)]
+            instantanious_regret = [reach * value - counterfactual_value for reach, value in zip(reach_prob, expected_values)]
             accumulated_regret = [regret + reach * value for regret, reach, value in zip(accumulated_regret, reach_prob, expected_values)]
 
             if not filtered_cards:

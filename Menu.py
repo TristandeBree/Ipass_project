@@ -14,3 +14,15 @@ class Menu:
                 amount_of_players = i + 1
                 time.sleep(0.2)
                 return amount_of_players
+
+    def get_ai_type(self, screen, font):
+        types = ['baby', 'better', 'MCCFR']
+        for i in range(len(types)):
+            rect = pygame.Rect(850, 650 + i * 50, 150, 50)
+            pygame.draw.rect(screen, (255, 255, 255), rect, 2)
+            text = font.render(types[i], False, (255, 255, 255))
+            screen.blit(text, (865, 665 + i * 50))
+            if rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                time.sleep(0.2)
+                return types[i]
+        return ''

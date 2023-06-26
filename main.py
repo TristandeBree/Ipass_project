@@ -18,13 +18,15 @@ screen = pygame.display.set_mode([1400,1200])
 
 running = True
 
-font = pygame.font.Font('freesansbold.ttf', 32)
+font = pygame.font.Font('freesansbold.ttf', 20)
 menu = Menu()
 helper = Helper()
 
 pick_players = False
+pick_ai = False
 
 amount_of_players = 0
+ai_type = ''
 
 while running:
 
@@ -34,7 +36,7 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    if pick_players:
+    if pick_players and pick_ai:
         text = font.render(f'Current player: {current_player}', False, (0, 255, 0))
         screen.blit(text, (500, 200))
 
@@ -42,7 +44,13 @@ while running:
 
         playing_table.draw_rond(screen)
 
-        helper.begin_MCCFR(current_player, playing_table, screen)
+        match ai_type:
+            case 'baby':
+                helper.baby_mode(current_player, playing_table, screen)
+            case 'better':
+                helper.better_mode(current_player, playing_table, screen)
+            case 'MCCFR':
+                helper.begin_MCCFR(current_player, playing_table, screen)
 
         playing_table.draw_played_cards(screen)
 
@@ -50,15 +58,34 @@ while running:
 
         current_player = playing_table.play_action(screen, current_player)
     else:
-        text = font.render("Choose the amount of players to play with: ", False, (255, 255, 255))
-        screen.blit(text, (350, 250))
 
-        amount_of_players = menu.get_player_amount(screen, font)
+        if not pick_players:
+            text = font.render("Choose the amount of players to play with: ", False, (255, 255, 255))
+            screen.blit(text, (150, 550))
+            amount_of_players = menu.get_player_amount(screen, font)
+        else:
+            text = font.render(f'Amount of players: {amount_of_players}', False, (255, 255, 255))
+            screen.blit(text, (150, 550))
+
+        if not pick_ai:
+            text = font.render("Choose the AI you want to play with: ", False, (255, 255, 255))
+            screen.blit(text, (850, 600))
+            ai_type = menu.get_ai_type(screen, font)
+        else:
+            text = font.render(f'The ai of your choice: {ai_type}', False, (255, 255, 255))
+            screen.blit(text, (850, 600))
 
         if type(amount_of_players) == int and amount_of_players > 0:
-            playing_table = Table(amount_of_players)
-            current_player = playing_table.find_starting_player()
             pick_players = True
+            if pick_ai:
+                playing_table = Table(amount_of_players)
+                current_player = playing_table.find_starting_player()
+
+        if ai_type != '':
+            pick_ai = True
+            if pick_players:
+                playing_table = Table(amount_of_players)
+                current_player = playing_table.find_starting_player()
 
     pygame.display.flip()
 
