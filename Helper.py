@@ -116,9 +116,10 @@ class Helper:
             #give the cards that are a legal move
             filtered_cards = [card for card in cards if card.suit == desired_suit] if desired_suit else cards
 
+            #calculate the values of the cards
             expected_values = [calculate_card_value(card) for card in filtered_cards]
-            counterfactual_value = sum([reach * value for reach, value in zip(reach_prob, expected_values)])
-            instantanious_regret = [reach * value - counterfactual_value for reach, value in zip(reach_prob, expected_values)]
+
+            #calculate the regret for eacht card using the value of the card, the probability to reach it and the previous regret
             accumulated_regret = [regret + reach * value for regret, reach, value in zip(accumulated_regret, reach_prob, expected_values)]
 
             if not filtered_cards:
